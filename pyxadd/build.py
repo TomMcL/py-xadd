@@ -20,6 +20,9 @@ class Builder(object):
     def ints(self, *args):
         self.vars("int", *args)
 
+    def floats(self, *args):
+        self.vars("float", *args)
+
     def terminal(self, exp):
         if exp == "1" or exp == 1:
             node_id = self.pool.one_id
@@ -41,7 +44,7 @@ class Builder(object):
             test = LinearTest(lhs, symbol, rhs)
         return Diagram(self.pool, self.pool.internal(test, self.pool.one_id, self.pool.zero_id))
 
-    def limit(self, var, lb, ub):
+    def limit(self, var, lb=None, ub=None):
         diagram = self.terminal(1)
         if lb is not None:
             diagram &= self.test(var, ">=", lb)
