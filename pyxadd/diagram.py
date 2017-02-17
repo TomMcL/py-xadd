@@ -199,10 +199,15 @@ class Pool:
         for name in args:
             self.vars[str(name)] = "bool"
 
+    def float_var(self, *args):
+        for name in args:
+            self.vars[str(name)] = "float"
+
     def add_var(self, name, v_type):
         mapping = {
             "int": self.int_var,
             "bool": self.bool_var,
+            "float": self.float_var,
         }
         if v_type not in mapping:
             raise RuntimeError("Type {} is not supported".format(v_type))
@@ -397,7 +402,7 @@ class Diagram:
         self._pool = pool
         if isinstance(root_node, Node):
             self._root_node = root_node
-        elif isinstance(root_node, (int, long)):
+        elif isinstance(root_node, int):
             self._root_node = pool.get_node(root_node)
         else:
             raise RuntimeError("Unexpected root node {} of type {}".format(root_node, type(root_node)))
