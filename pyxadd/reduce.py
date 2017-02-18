@@ -1,6 +1,7 @@
 from __future__ import print_function
 
 import sympy
+import pysmt.environment
 import pysmt.shortcuts as smt
 from pysmt.typing import INT
 
@@ -107,10 +108,11 @@ class LinearReduction(Reducer):
 
 
 class SmtReduce(Reducer):
-    def __init__(self, pool):
+    def __init__(self, pool, solver=None):
         Reducer.__init__(self, pool)
         self.variables = None
         self.operator_dict = dict()
+        self.solver = solver
 
     @property
     def columns(self):
@@ -120,7 +122,7 @@ class SmtReduce(Reducer):
         if variables is None:
             variables = self._get_variables(node_id)
         self.variables = variables
-        with smt.Solver() as solver:
+        with smt.Solver(name=self.solver) as solver:
             return self._reduce(self.pool.get_node(node_id), solver).node_id
 
     def _reduce(self, node, solver):
@@ -128,7 +130,7 @@ class SmtReduce(Reducer):
             # Reached end of the path, path is consistent
             return node
         elif isinstance(node, InternalNode):
-
+            print("TESTING {} AND {}".format(node.test.operator, ~node.test.operator))
             smt_test_true, smt_test_false = (self._test_to_smt(op) for op in (node.test.operator, ~node.test.operator))
 
             def reduce_branch(true):
@@ -140,11 +142,11 @@ class SmtReduce(Reducer):
                 return reduced_node
 
             if not solver.solve([smt_test_true]):
-                # print(smt_test, "not possible, pursue false branch")
+                #print(smt_test_true, "not possible, pursue false branch")
                 return reduce_branch(False)
 
             if not solver.solve([smt_test_false]):
-                # print("not", smt.Not(smt_test), "not possible, pursue true branch")
+                #print(smt_test_false, "not possible, pursue true branch")
                 return reduce_branch(True)
 
             # print(smt_test, "possible, pursue both branches")

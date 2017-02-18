@@ -340,13 +340,13 @@ class Diagram:
 
         return node.evaluate(assignment)
 
-    def reduce(self, variables=None, method="linear"):
+    def reduce(self, variables=None, method="linear", smt_solver=None):
         if method == "linear":
             from pyxadd.reduce import LinearReduction
             reducer = LinearReduction(self.pool)
         elif method == "smt":
             from pyxadd.reduce import SmtReduce
-            reducer = SmtReduce(self.pool)
+            reducer = SmtReduce(self.pool, solver=smt_solver)
         else:
             raise RuntimeError("Unknown reduction method {} (valid options are 'linear' or 'smt')".format(method))
 
