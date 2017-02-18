@@ -44,12 +44,12 @@ class Builder(object):
             test = LinearTest(lhs, symbol, rhs)
         return Diagram(self.pool, self.pool.internal(test, self.pool.one_id, self.pool.zero_id))
 
-    def limit(self, var, lb=None, ub=None):
+    def limit(self, var, lb=None, ub=None, lb_strict=False, ub_strict=False):
         diagram = self.terminal(1)
         if lb is not None:
-            diagram &= self.test(var, ">=", lb)
+            diagram &= self.test(var, ">=" if not lb_strict else ">", lb)
         if ub is not None:
-            diagram &= self.test(var, "<=", ub)
+            diagram &= self.test(var, "<=" if not ub_strict else "<", ub)
         return diagram
 
     def ite(self, if_diagram, then_diagram, else_diagram=None):
