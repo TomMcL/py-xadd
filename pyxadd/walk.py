@@ -271,11 +271,13 @@ def profile_cache_is_enabled(pool):
     return pool.has_cache("profile")
 
 
+def _construct_walking_profile(p, node):
+    return WalkingProfile(p.diagram(node))
+
+
 def add_profile_cache(pool):
-    def construct_walking_profile(p, node):
-        return WalkingProfile(p.diagram(node))
     if not profile_cache_is_enabled(pool):
-        pool.add_cache("profile", DefaultCache(construct_walking_profile))
+        pool.add_cache("profile", DefaultCache(_construct_walking_profile))
 
 
 def get_profile(root, pool=None):

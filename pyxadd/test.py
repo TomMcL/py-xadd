@@ -170,7 +170,22 @@ class Operator:
         return updated
 
     def rename(self, translation):
-        return self._update({translation[k] if k in translation else k: v for k, v in self._lhs.items()}, self.rhs)
+        #TODO This is horrible, how better to do this?
+        new_vals = []
+        new_rhs  = self._rhs
+        for k, v in self._lhs.items():
+            k_new = k
+            if k in translation:
+                if '+' in translation[k]:
+                    k_new = translation[k].split('+', 1)[0].strip()
+                    new_rhs += float(translation[k].split('+', 2)[1].strip())
+                elif '-' in translation[k]:
+                    k_new = translation[k].split('-', 1)[0].strip()
+                    new_rhs -= float(translation[k].split('-', 2)[1].strip())
+                else:
+                    k_new = translation[k]
+            new_vals.append((k_new, v))
+        return self._update(dict(new_vals), new_rhs)
 
 
 class LessThan(Operator):

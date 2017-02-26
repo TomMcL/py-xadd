@@ -132,6 +132,10 @@ class Ordering(object):
         raise NotImplementedError()
 
 
+def _create_diagram(pool, node_id):
+    return Diagram(pool, pool.get_node(node_id))
+
+
 class Pool:
     def __init__(self, empty=False, ordering=None):
         self._counter = 1
@@ -149,7 +153,7 @@ class Pool:
             self.pos_inf_id = self.terminal(sympy.oo)
             self.neg_inf_id = self.terminal(-sympy.oo)
 
-        self.add_cache("diagram", DefaultCache(lambda pool, node_id: Diagram(pool, pool.get_node(node_id))))
+        self.add_cache("diagram", DefaultCache(_create_diagram))
 
     def has_cache(self, name):
         return name in self.caches
