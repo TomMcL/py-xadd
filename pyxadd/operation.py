@@ -87,6 +87,21 @@ class CaseMax(Operation):
         return None
 
 
+class CaseMax(Operation):
+    def __init__(self):
+        Operation.__init__(self, "max")
+
+    @classmethod
+    def compute_terminal(cls, pool, node1, node2):
+        from pyxadd.diagram import TerminalNode
+        from pyxadd.test import LinearTest
+        if isinstance(node1, TerminalNode) and isinstance(node2, TerminalNode):
+            return pool.internal(LinearTest(node1.expression, '>', node2.expression),
+                                 node1.node_id,
+                                 node2.node_id)
+        return None
+
+
 class LogicalOr(Operation):
     def __init__(self):
         Operation.__init__(self, "|")
